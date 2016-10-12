@@ -45,8 +45,15 @@ esac
 if which ninja 2>&1 >/dev/null; then
   CMAKE_OPTS="-G Ninja $CMAKE_OPTS"
   BUILD_FLAGS="-- -v"
+  if [ -n "$N_CORES" ]; then
+    BUILD_FLAGS="$BUILD_FLAGS -j$N_CORES"
+  fi
 else
-  BUILD_FLAGS="-- -j$(getconf _NPROCESSORS_ONLN)"
+  if [ -n "$N_CORES" ]; then
+    BUILD_FLAGS="-- -j$N_CORES"
+  else
+    BUILD_FLAGS="-- -j$(getconf _NPROCESSORS_ONLN)"
+  fi
 fi
 
 cmake $CMAKE_OPTS ..
